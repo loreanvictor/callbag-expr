@@ -1,6 +1,6 @@
 {
   "name": "callbag-expr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Expressions with callbags",
   "main": "dist/es5/index.js",
   "module": "dist/es6/index.js",
@@ -46,8 +46,10 @@
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.8",
     "callbag": "^1.2.0",
+    "callbag-behavior-subject": "^1.2.0",
     "callbag-interval": "^1.1.0",
     "callbag-map": "^1.1.0",
+    "callbag-of": "^2.0.0",
     "callbag-pipe": "^1.2.0",
     "callbag-subject": "^1.0.2",
     "callbag-subscribe": "^1.5.1",

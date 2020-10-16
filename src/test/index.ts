@@ -4,7 +4,9 @@
 import { expect, should } from 'chai'; should();
 import subscribe from 'callbag-subscribe';
 import pipe from 'callbag-pipe';
+import of from 'callbag-of';
 const subject = require('callbag-subject');
+const behaviorSubject = require('callbag-behavior-subject');
 
 import expr from '../index';
 
@@ -87,6 +89,20 @@ describe('callbag-expr', () => {
     );
   });
 
+  it('should do initial evaluation with immediate emits from sources.', () => {
+    const a = of(17);
+    const b = behaviorSubject(26);
+    const c = of(-1);
+    const r: number[] = [];
+
+    pipe(
+      expr(($, _) => $(a)!! + $<number>(b)!! + _(c)!!),
+      subscribe(v => r.push(v))
+    );
+
+    r.should.eql([42, 42, 42]);
+  });
+
   it('should re-evaluate every time each source emits.', () => {
     const a = subject();
     const b = subject();
@@ -117,7 +133,7 @@ describe('callbag-expr', () => {
     r.should.eql([0, 2, 11]);
   });
 
-  it('should send a signal to all sources when one source terminates.', done => {
+  it('should send a signal to all sources when one source errors.', done => {
     const a = subject();
     const b = (t: any, m?: any) => {
       if (t === 0) {
@@ -130,7 +146,30 @@ describe('callbag-expr', () => {
       subscribe(() => {})
     );
 
+    a(2, 'Oops');
+  });
+
+  it('should terminate when all sources are terminated.', done => {
+    const a = subject();
+    const b = subject();
+    const r: number[] = [];
+    const s = (src: any) => {
+      src(0, (t: any, d: any) => {
+        if (t === 1) { r.push(d); }
+        if (t === 2) {
+          r.should.eql([0, 2, 5, 7]);
+          done();
+        }
+      });
+    };
+
+    pipe(expr($ => $(a, 0) + $(b, 0)), s);
+    a(1, 2);
+    b(1, 3);
+    b(2);
+    a(1, 4);
     a(2);
+    a(1, 5); // --> bad source
   });
 
   it('should ignore weird messages from source.', () => {

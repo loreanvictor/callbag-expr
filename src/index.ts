@@ -10,6 +10,7 @@ interface Tracking<T> {
   talkback?: Callbag<any, void>;
   value: any;
   seen: boolean;
+  terminated: boolean;
 }
 
 const _Unset = {};
@@ -18,67 +19,73 @@ export function expr<R>(fn: ($: Track, _: Track) => R): Source<R> {
   return (type: START | DATA | END, msg?: any) => {
     if (type !== 0) { return; }
     const sink = msg as Sink<R>;
-    let sources: Tracking<any>[] | undefined = undefined;
+    let trackings: Tracking<any>[] | undefined = undefined;
 
-    const subscribe = <T>(cb: Callbag<any, T>, active: boolean) => {
-      let src = sources!!.find(s => s.cb === cb);
-      if (!src) {
-        src = {cb, seen: true, value: _Unset};
-        sources!!.push(src);
+    const connect = <T>(cb: Callbag<any, T>, active: boolean) => {
+      let tracking = trackings!!.find(source => source.cb === cb);
+      if (!tracking) {
+        tracking = {cb, seen: true, value: _Unset, terminated: false};
+        trackings!!.push(tracking);
         cb(0, (t: START | DATA | END, m?: any) => {
           if (t === 0) {
-            src!!.talkback = m;
+            tracking!!.talkback = m;
           } else if (t === 1) {
-            src!!.value = m;
-            if (active) { run(src!!); }
+            if (!tracking!!.terminated) {      // --> for mis-behaving sources
+              tracking!!.value = m;
+              if (active) { run(tracking!!); }
+            }
           } else if (t === 2) {
-            sink(2, m);
-            sources!!.forEach(s => {
-              if (s.cb !== cb && s.talkback) {
-                s.talkback(2, m);
+            if (m) {
+              sink(2, m);
+              trackings!!.forEach(s => {
+                if (s.cb !== cb && s.talkback) {
+                  s.talkback(2, m);
+                }
+              });
+              trackings!!.length = 0;
+            } else {
+              tracking!!.terminated = true;
+              if (!trackings!!.some(s => !s.terminated)) {
+                trackings!!.length = 0;
+                sink(2);
               }
-            });
-            sources!!.length = 0;
+            }
           }
         });
       }
 
-      return src;
+      return tracking;
     };
 
-    const run = (track?: Tracking<any>) => {
-      if (!sources) { sources = []; }
-      sources.forEach(s => s.seen = false);
-      const value = fn(
-        <T>(cb: Callbag<any, T>, i?: T) => {
-          const s = subscribe(cb, true);
-          s.seen = true;
-          return (s.value === _Unset) ? i : s.value;
-        },
-        <T>(cb: Callbag<any, T>, i?: T) => {
-          const s = subscribe(cb, false);
-          s.seen = true;
-          return (s.value === _Unset) ? i : s.value;
-        }
-      );
-      if (!track || track.seen) { sink(1, value); }
+    const track = (active: boolean) => <T>(cb: Callbag<any, T>, initial?: T) => {
+      const tracking = connect(cb, active);
+      tracking.seen = true;
+      return (tracking.value === _Unset) ? initial : tracking.value;
     };
 
-    const prerun_buffer: [START | DATA | END, any][] = [];
+    const run = (tracking?: Tracking<any>) => {
+      if (!trackings) { trackings = []; }
+      trackings.forEach(s => s.seen = false);
+      const value = fn(track(true), track(false));
+      if (!tracking || tracking.seen) { sink(1, value); }
+    };
+
     const relay = (t: START | DATA | END, m?: any) => {
-      sources!!.forEach(s => {
+      trackings!!.forEach(s => {
         if (s.talkback) {
           s.talkback(t as any, m);
         }
       });
 
       if (t === 2) {
-        sources!!.length = 0;
+        trackings!!.length = 0;
       }
     };
 
+    const prerun_buffer: [START | DATA | END, any][] = [];
+
     sink(0, (t: START | DATA | END, m?: any) => {
-      if (sources) { relay(t, m); }
+      if (trackings) { relay(t, m); }
       else { prerun_buffer.push([t, m]); }
     });
 
