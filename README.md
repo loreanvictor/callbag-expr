@@ -18,3 +18,7 @@ pipe(
 ```
 
 [► TRY IT!](https://stackblitz.com/edit/callbag-expr-demo?devtoolsheight=33&embed=1&file=index.ts)
+
+<br><br>
+
+_Inspired by [RxJS Autorun](https://github.com/kosich/rxjs-autorun)._
