@@ -6,7 +6,7 @@ Create expressions based on callbags.
 npm i callbag-expr
 ```
 
-<br><br>
+<br>
 
 Expressions with callbags:
 
