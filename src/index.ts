@@ -8,7 +8,7 @@ type Track = {
 interface Tracking<T> {
   cb: Callbag<any, T>;
   talkback?: Callbag<any, void>;
-  value: any;
+  value: T;
   seen: boolean;
   terminated: boolean;
 }
@@ -38,7 +38,7 @@ export function expr<R>(fn: ($: Track, _: Track) => R): Source<R> {
             if (m) {
               sink(2, m);
               trackings!!.forEach(s => {
-                if (s.cb !== cb && s.talkback) {
+                if (s.cb !== cb && s.talkback && !s.terminated) {
                   s.talkback(2, m);
                 }
               });
