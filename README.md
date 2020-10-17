@@ -1,18 +1,17 @@
 # callbag-expr
-Expressions based on callbags
+
+Expressions with callbags:
 
 ```ts
-const interval = require('callbag-interval')
-
+import interval from 'callbag-interval'
 import pipe from 'callbag-pipe'
 import subscribe from 'callbag-subscribe'
 import expr from 'callbag-expr'
 
 const a = interval(1000)
-const b = interval(2000)
 
 pipe(
-  expr(($, _) => $(a, 0) + ' :: ' + _(b, 0)),
+  expr($ => 'Hellow: ' + $(a, 0)),
   subscribe(console.log)
 )
 ```
