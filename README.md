@@ -107,7 +107,7 @@ git clone https://github.com/loreanvictor/callbag-expr.git
 npm i               # --> install dependencies
 ```
 ```bash
-npm start           # --> runs samples/index.ts
+npm start           # --> run samples/index.ts
 ```
 ```bash
 npm test            # --> run tests
