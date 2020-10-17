@@ -91,7 +91,12 @@ expr($ => $(i));
 // WRONG:
 const a = interval(1000);
 const b = interval(1000);
-expr($ => _(a, 0) > 5 ? $(b) : 32);   // --> a is not actively tracked, b is also not tracked initially, so the expression is never re-evaluated.
+
+//
+// --> a is not actively tracked, b is also not tracked initially,
+// --> so the expression is never re-evaluated.
+//
+expr($ => _(a, 0) > 5 ? $(b) : 32);
 ```
 
 <br>
