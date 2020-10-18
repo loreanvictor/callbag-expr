@@ -8,7 +8,7 @@ npm i callbag-expr
 
 <br>
 
-Expressions with callbags:
+👉 Expressions with callbags:
 
 ```ts
 import interval from 'callbag-interval'
@@ -28,7 +28,7 @@ pipe(
 
 <br>
 
-Conditional expressions:
+👉 Conditional expressions:
 
 ```ts
 import interval from 'callbag-interval'
@@ -52,7 +52,7 @@ pipe(
 
 <br>
 
-Passive tracking, i.e. using latest value from callbag without re-evaluating when it emits:
+👉 Passive tracking, i.e. using latest value from callbag without re-evaluating when it emits:
 
 ```ts
 import interval from 'callbag-interval'
@@ -74,7 +74,7 @@ pipe(
 
 ### Gotchas
 
-👉 Don't create new callbags in the expression:
+⚠️⚠️ Don't create new callbags in the expression:
 
 ```ts
 // WRONG:
@@ -87,7 +87,7 @@ expr($ => $(i));
 
 <br>
 
-👉 Make sure your callbags have initial value, or provide initial value. If you don't, `$(a)` might default to `undefined` (so take that into account).
+⚠️⚠️ Make sure your callbags have initial value, or provide initial value. If you don't, `$(a)` might default to `undefined` (so take that into account).
 ```ts
 // WRONG:
 const a = interval(1000);
@@ -106,7 +106,7 @@ expr($ => $(a));        // --> initially will be 42
 
 <br>
 
-👉 Make sure some callbag is actively tracked:
+⚠️⚠️ Make sure some callbag is actively tracked:
 
 ```ts
 // WRONG:
