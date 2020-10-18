@@ -85,6 +85,23 @@ const i = interval(1000);
 expr($ => $(i));
 ```
 
+- Make sure your callbags have initial value, or provide initial value. If you don't, `$(a)` might default to `undefined` (so take that into account).
+```ts
+// WRONG:
+const a = interval(1000);
+expr($ => $(a));         // --> initially will be `undefined`
+```
+```ts
+// CORRECT:
+const a = interval(1000);
+expr($ => $(a, 0));     // --> initially will be 0
+```
+```ts
+// CORRECT:
+const a = makeBehaviorSubject(42);
+expr($ => $(a));        // --> initially will be 42
+```
+
 - Make sure some callbag is actively tracked:
 
 ```ts
