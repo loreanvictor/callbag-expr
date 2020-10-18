@@ -74,7 +74,7 @@ pipe(
 
 ### Gotchas
 
-- Don't create new callbags in the expression:
+👉 Don't create new callbags in the expression:
 
 ```ts
 // WRONG:
@@ -85,7 +85,9 @@ const i = interval(1000);
 expr($ => $(i));
 ```
 
-- Make sure your callbags have initial value, or provide initial value. If you don't, `$(a)` might default to `undefined` (so take that into account).
+<br>
+
+👉 Make sure your callbags have initial value, or provide initial value. If you don't, `$(a)` might default to `undefined` (so take that into account).
 ```ts
 // WRONG:
 const a = interval(1000);
@@ -102,7 +104,9 @@ const a = makeBehaviorSubject(42);
 expr($ => $(a));        // --> initially will be 42
 ```
 
-- Make sure some callbag is actively tracked:
+<br>
+
+👉 Make sure some callbag is actively tracked:
 
 ```ts
 // WRONG:
