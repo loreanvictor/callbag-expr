@@ -10,6 +10,6 @@ export default Object.assign(base, {
     nodeResolve(),
   ],
   output: Object.assign(base.output, {
-    file: 'dist/bundles/rxdeep.es6.min.js',
+    file: 'dist/bundles/callbag-expr.es6.min.js',
   }),
 });
