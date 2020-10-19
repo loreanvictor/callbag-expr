@@ -72,7 +72,7 @@ pipe(
 
 <br>
 
-### Gotchas
+## Gotchas
 
 ⚠️⚠️ Don't create new callbags in the expression:
 
@@ -122,7 +122,7 @@ expr($ => _(a, 0) > 5 ? $(b) : 32);
 
 <br>
 
-### Contribution
+## Contribution
 
 Play nice and respectful. Useful commands for development:
 
