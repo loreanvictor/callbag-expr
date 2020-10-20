@@ -1,13 +1,13 @@
 import { Callbag, Source, Sink, START, DATA, END } from 'callbag';
 
 type Track = {
-  <T>(cb: Callbag<any, T>): T | undefined;
-  <T>(cb: Callbag<any, T>, initial: T): T;
+  <T>(cb: Callbag<never, T>): T | undefined;
+  <T>(cb: Callbag<never, T>, initial: T): T;
 };
 
 interface Tracking<T> {
-  cb: Callbag<any, T>;
-  talkback?: Callbag<any, void>;
+  cb: Callbag<never, T>;
+  talkback?: Callbag<any, never>;
   value: T;
   seen: boolean;
   terminated: boolean;
@@ -21,7 +21,7 @@ export function expr<R>(fn: ($: Track, _: Track) => R): Source<R> {
     const sink = msg as Sink<R>;
     let trackings: Tracking<any>[] | undefined = undefined;
 
-    const connect = <T>(cb: Callbag<any, T>, active: boolean) => {
+    const connect = <T>(cb: Callbag<never, T>, active: boolean) => {
       let tracking = trackings!!.find(source => source.cb === cb);
       if (!tracking) {
         tracking = {cb, seen: true, value: _Unset, terminated: false};
@@ -57,7 +57,7 @@ export function expr<R>(fn: ($: Track, _: Track) => R): Source<R> {
       return tracking;
     };
 
-    const track = (active: boolean) => <T>(cb: Callbag<any, T>, initial?: T) => {
+    const track = (active: boolean) => <T>(cb: Callbag<never, T>, initial?: T) => {
       const tracking = connect(cb, active);
       tracking.seen = true;
       return (tracking.value === _Unset) ? initial : tracking.value;
