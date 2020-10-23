@@ -38,7 +38,7 @@ describe('callbag-expr', () => {
   it('should ignore non-greet messages.', () => {
     let r = 0;
     const e = expr(() => r++);
-    e(1);
+    e(1 as any);
     e(2);
     r.should.equal(0);
   });
